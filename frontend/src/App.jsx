@@ -1,33 +1,76 @@
-import { useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
-import PromptForm from "./components/PromptForm";
-import Loader from "./components/Loader";
-import ImageCard from "./components/ImageCard";
-import Footer from "./components/Footer";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import "./App.css";
 
 function App() {
-  const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState("");
-
   return (
-    <div className="app">
-      <Navbar />
+    <Routes>
 
-      <PromptForm
-        loading={loading}
-        setLoading={setLoading}
-        setImage={setImage}
+      {/* Default Route */}
+      <Route
+        path="/"
+        element={<Navigate to="/login" replace />}
       />
 
-      {loading && <Loader />}
 
-      {image && <ImageCard image={image} />}
+      {/* Public Routes */}
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-      <Footer />
-    </div>
+      <Route
+        path="/register"
+        element={<Register />}
+      />
+
+
+      {/* Protected Dashboard Route */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* Old Home Redirect */}
+      <Route
+        path="/home"
+        element={<Navigate to="/dashboard" replace />}
+      />
+
+
+      {/* 404 Page */}
+      <Route
+        path="*"
+        element={
+          <div
+            style={{
+              minHeight: "100vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              background: "#0f172a",
+              color: "#fff",
+              fontSize: "40px",
+              fontWeight: "bold",
+            }}
+          >
+            404 | Page Not Found
+          </div>
+        }
+      />
+
+    </Routes>
   );
 }
 
