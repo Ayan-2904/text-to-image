@@ -1,169 +1,95 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import StatsCard from "../components/StatsCard";
 import PromptBox from "../components/PromptBox";
 import ImageViewer from "../components/ImageViewer";
 import HistoryCard from "../components/HistoryCard";
+import api from "../services/api";
 
-import {
-  FaImage,
-  FaKeyboard,
-  FaDatabase,
-  FaClock,
-} from "react-icons/fa";
-
+import { FaImage, FaKeyboard } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 function Dashboard() {
-
+  const { user, setUser } = useAuth();
   const [image, setImage] = useState("");
-
   const [prompt, setPrompt] = useState("");
-
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
 
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await api.get("/generate/history");
+        if (response.data?.success) {
+          setHistory(response.data.history || []);
+        }
+      } catch (error) {
+        console.error("Failed to load dashboard history:", error);
+      }
+    };
+    fetchHistory();
+  }, []);
 
-  // Temporary history data
-  // Later this will come from MongoDB
-  const [history] = useState([]);
+  const handleImageGenerated = (newItem) => {
+    setHistory((prev) => [newItem, ...prev]);
+  };
 
+  const handleDeleteItem = async (id) => {
+    try {
+      await api.delete(`/generate/history/${id}`);
+      setHistory((prev) => prev.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error("Failed to delete history item:", error);
+    }
+  };
 
   return (
-
     <div className="dashboard">
-
-
-      {/* Sidebar */}
-
       <Sidebar />
 
-
-      {/* Main Content */}
-
       <main className="dashboard-content">
-
-
-        {/* Top Navigation */}
-
         <Topbar />
 
-
-
-        {/* Welcome Section */}
-
         <section className="welcome">
-
-          <h1>
-            Welcome back, Ayan 👋
-          </h1>
-
-          <p>
-            Create amazing AI images from your imagination.
-          </p>
-
+          <h1>Welcome back, {user?.name || "Creator"} 👋</h1>
+          <p>Create amazing AI images from your imagination.</p>
         </section>
 
-
-
-
-        {/* Statistics */}
-
         <div className="stats-grid">
-
-
           <StatsCard
             title="Images Generated"
-            value={145}
-            subtitle="Total AI Images"
+            value={user?.totalImages || 0}
+            subtitle="Total Images"
             icon={<FaImage />}
             color="#7c3aed"
           />
 
-
           <StatsCard
-            title="Prompts"
-            value={162}
+            title="Prompts Used"
+            value={user?.totalPrompts || 0}
             subtitle="Total Prompts"
             icon={<FaKeyboard />}
-            color="#3b82f6"
+            color="#2563eb"
           />
-
-
-          <StatsCard
-            title="Redis Cache"
-            value={91}
-            subtitle="Cache Hit %"
-            icon={<FaDatabase />}
-            color="#10b981"
-          />
-
-
-          <StatsCard
-            title="Today's Images"
-            value={8}
-            subtitle="Generated Today"
-            icon={<FaClock />}
-            color="#f59e0b"
-          />
-
-
         </div>
 
-
-
-
-
-        {/* AI Generator */}
-
         <PromptBox
-
           setImage={setImage}
-
           setPrompt={setPrompt}
-
           loading={loading}
-
           setLoading={setLoading}
-
+          setUser={setUser}
+          user={user}
+          onImageGenerated={handleImageGenerated}
         />
 
+        <ImageViewer image={image} prompt={prompt} />
 
-
-
-
-        {/* Generated Image */}
-
-        <ImageViewer
-
-          image={image}
-
-          prompt={prompt}
-
-        />
-
-
-
-
-
-        {/* History */}
-
-        <HistoryCard
-
-          history={history}
-
-        />
-
-
-
+        <HistoryCard history={history} onDeleteItem={handleDeleteItem} />
       </main>
-
-
     </div>
-
   );
-
 }
-
 
 export default Dashboard;

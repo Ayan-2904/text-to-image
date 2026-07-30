@@ -1,83 +1,185 @@
 import {
+  NavLink,
+} from "react-router-dom";
+
+
+import {
   FaHome,
-  FaMagic,
   FaHistory,
-  FaHeart,
-  FaUser,
   FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
 
-import { Link, useLocation } from "react-router-dom";
+
+import { useAuth } from "../context/AuthContext";
+
+
 
 function Sidebar() {
-  const location = useLocation();
 
-  const menu = [
-    {
-      title: "Dashboard",
-      icon: <FaHome />,
-      path: "/",
-    },
-    {
-      title: "Generate",
-      icon: <FaMagic />,
-      path: "/",
-    },
-    {
-      title: "History",
-      icon: <FaHistory />,
-      path: "/history",
-    },
-    {
-      title: "Favorites",
-      icon: <FaHeart />,
-      path: "/favorites",
-    },
-    {
-      title: "Profile",
-      icon: <FaUser />,
-      path: "/profile",
-    },
-    {
-      title: "Settings",
-      icon: <FaCog />,
-      path: "/settings",
-    },
-  ];
+
+  const { logout } = useAuth();
+
+
+
 
   return (
+
+
     <aside className="sidebar">
+
+
+
+
+
+
       <div className="logo">
-        <h2>🎨 AI Studio</h2>
-        <span>Create Amazing Images</span>
+
+
+        <h2>
+
+          AI Studio
+
+        </h2>
+
+
+        <span>
+
+          Text To Image
+
+        </span>
+
+
       </div>
+
+
+
+
+
+
+
+
 
       <nav className="menu">
-        {menu.map((item, index) => (
-          <Link
-            key={index}
-            to={item.path}
-            className={
-              location.pathname === item.path
-                ? "menu-item active"
-                : "menu-item"
-            }
-          >
-            {item.icon}
-            <span>{item.title}</span>
-          </Link>
-        ))}
+
+
+
+
+
+
+        <NavLink
+
+          to="/dashboard"
+
+          className="menu-item"
+
+        >
+
+          <FaHome />
+
+          Dashboard
+
+
+        </NavLink>
+
+
+
+
+
+
+
+
+
+        <NavLink
+
+          to="/history"
+
+          className="menu-item"
+
+        >
+
+          <FaHistory />
+
+          History
+
+
+        </NavLink>
+
+
+
+
+
+
+
+
+
+        <NavLink
+
+          to="/settings"
+
+          className="menu-item"
+
+        >
+
+          <FaCog />
+
+          Settings
+
+
+        </NavLink>
+
+
+
+
+
+
+
       </nav>
 
+
+
+
+
+
+
+
+
       <div className="sidebar-footer">
-        <button className="logout-btn">
+
+
+
+        <button
+
+          className="logout-btn"
+
+          onClick={logout}
+
+        >
+
+
           <FaSignOutAlt />
-          <span>Logout</span>
+
+
+          Logout
+
+
+
         </button>
+
+
+
       </div>
+
+
+
+
+
     </aside>
+
+
   );
+
 }
+
 
 export default Sidebar;

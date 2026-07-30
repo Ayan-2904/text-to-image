@@ -1,66 +1,41 @@
-import {
-  FaBell,
-  FaSearch,
-  FaMoon,
-  FaSun,
-} from "react-icons/fa";
-import { useState } from "react";
+import { FaMoon, FaSun } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 function Topbar() {
+  const navigate = useNavigate();
   const { user } = useAuth();
-
-  const [darkMode, setDarkMode] = useState(true);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   return (
     <header className="topbar">
-
-      <div className="search-box">
-
-        <FaSearch />
-
-        <input
-          type="text"
-          placeholder="Search prompts..."
-        />
-
-      </div>
-
       <div className="topbar-right">
-
-        <button className="icon-btn">
-
-          <FaBell />
-
-          <span className="notification-dot"></span>
-
-        </button>
-
+        {/* Theme Button */}
         <button
           className="icon-btn"
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={toggleTheme}
+          title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
-          {darkMode ? <FaSun /> : <FaMoon />}
+          {isDarkMode ? <FaSun /> : <FaMoon />}
         </button>
 
-        <div className="profile-box">
-
+        {/* Profile */}
+        <div
+          className="profile-box"
+          onClick={() => navigate("/profile")}
+          style={{ cursor: "pointer" }}
+        >
           <div className="avatar">
-            {user?.name?.charAt(0).toUpperCase()}
+            {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
           </div>
 
           <div>
-
-            <h4>{user?.name}</h4>
-
-            <p>Premium User</p>
-
+            <h4>{user?.name || "User"}</h4>
+            <p>AI Creator</p>
           </div>
-
         </div>
-
       </div>
-
     </header>
   );
 }

@@ -1,13 +1,13 @@
 function Footer() {
   return (
-    <footer
-      style={{
-        marginTop: "40px",
-        color: "#666",
-        fontSize: "15px",
-      }}
-    >
-      © 2026 AI Text To Image Generator
+    <footer className="footer">
+      <p>
+        © {new Date().getFullYear()} AI Image Studio
+      </p>
+
+      <span>
+        Built with React, Node.js, MongoDB & AI
+      </span>
     </footer>
   );
 }
