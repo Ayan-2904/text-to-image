@@ -15,9 +15,13 @@ dotenv.config();
 
 connectDB();
 
-
-
 const app = express();
+
+// Ensure DB is connected for every request (Serverless pattern)
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
 
 
 
